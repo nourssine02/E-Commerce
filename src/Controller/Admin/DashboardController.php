@@ -4,6 +4,8 @@ namespace App\Controller\Admin;
 
 use App\Entity\Article;
 use App\Entity\Categorie;
+
+use App\Entity\User;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
@@ -27,14 +29,16 @@ class DashboardController extends AbstractDashboardController
             ->setTitle('E Commerce')
             ->disableUrlSignatures()
             ->renderContentMaximized();
-
     }
 
     public function configureMenuItems(): iterable
     {
+        yield MenuItem::linktoRoute('Back to the website', 'fas fa-home', 'website');
         yield MenuItem::linkToDashboard('Dashboard', 'fa fa-home');
         yield MenuItem::section('List');
         yield MenuItem::linkToCrud('Categories', 'fas fa-tags', Categorie::class);
         yield MenuItem::linkToCrud('Articles', 'fas fa-tags', Article::class);
+        yield MenuItem::linkToCrud('Users', 'fas fa-tags', User::class);
+    
     }
 }

@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{% endblock %}
+
+{% block body %}
+
+	<Section style="margin: 100px 300px 100px 320px ;">
+
+		<div class="container">
+
+
+			<form action="{{ path('securite_login')}}" method="post">
+
+				<h4 class="mtext-105 cl2 txt-center p-b-30">
+					Connexion
+				</h4>
+				<h6 class="mtext-60 cl2 txt-center p-b-30">
+					if you don't have an account !<a href="{{ path('securite_register')}}">Create an account</a>
+					<h6>
+						<div class="bor8 m-b-20 how-pos4-parent">
+
+							<input class="stext-111 cl2 plh3 size-116 p-l-62 p-r-30" type="text" name="_username" required placeholder="Your Email Address">
+						</div>
+						<div class="bor8 m-b-20 how-pos4-parent">
+
+							<input class="stext-111 cl2 plh3 size-116 p-l-62 p-r-30" type="password" name="_password" placeholder="Your Password ">
+						</div>
+
+						<button class="flex-c-m stext-101 cl0 size-121 bg3 bor1 hov-btn3 p-lr-15 trans-04 pointer">
+							Submit
+						</button>
+					</form>
+
+
+				</div>
+			</section>
+
+
+		{% endblock %}

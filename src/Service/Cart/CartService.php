@@ -3,6 +3,8 @@
 namespace App\Service\Cart;
 
 use App\Repository\ArticleRepository;
+use App\Repository\CouleurRepository;
+use App\Repository\TailleRepository;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class CartService
@@ -56,27 +58,27 @@ class CartService
         $panier = $this->session->get('panier', []);
 
         $panierWithData = [];
-        foreach ($panier as $id => $qteStock) {
+        foreach ($panier as $id => $quantite) {
             $panierWithData[] = [
                 'article' => $this->articleRepository->find($id),
-                'qteStock' => $qteStock
+                'quantite' => $quantite,
+
             ];
         }
 
         return $panierWithData;
     }
 
-     public function getTotal(): float {
+    public function getTotal(): float
+    {
 
         $total = 0;
         $panierWithData = $this->getFullCart();
         foreach ($panierWithData as $item) {
-            
-            $totalItem = $item['article']->getPrix() * $item['qteStock'];
+
+            $totalItem = $item['article']->getPrix() * $item['quantite'];
             $total += $totalItem;
         }
         return $total;
-     }
-
-
+    }
 }

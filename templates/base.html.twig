@@ -53,8 +53,8 @@
 		rel="stylesheet" type="text/css" href="{{ asset("vendor/perfect-scrollbar/perfect-scrollbar.css")}}">
 		<!--===============================================================================================-->
 		<link rel="stylesheet" type="text/css" href="{{ asset("css/util.css")}}">
-		<link
-		rel="stylesheet" type="text/css" href="{{ asset("css/main.css")}}">
+		<link rel="stylesheet" type="text/css" href="{{ asset("css/main.css")}}">
+	
 	<!--===============================================================================================-->
 	</head>
 	<body
@@ -78,9 +78,6 @@
 								Help & FAQs
 							</a>
 
-							<a href="#" class="flex-c-m trans-04 p-lr-25">
-								My Account
-							</a>
 
 							<a href="#" class="flex-c-m trans-04 p-lr-25">
 								EN
@@ -89,6 +86,27 @@
 							<a href="#" class="flex-c-m trans-04 p-lr-25">
 								USD
 							</a>
+
+							{% if not is_granted('ROLE_USER') and not is_granted('ROLE_ADMIN')%}
+								<a href="{{ path('securite_login')}}" class="flex-c-m trans-04 p-lr-25">
+									My Account
+								</a>
+							{% else %}
+								<a href="{{ path('securite_logout')}}" class="flex-c-m trans-04 p-lr-25">
+
+									Logout
+									{{app.user.username}}
+									{% if is_granted('ROLE_ADMIN') %}
+										<a href="{{ path('admin') }}" class="flex-c-m trans-04 p-lr-25">
+											admin dashboard
+										</a>
+									{% endif %}
+
+								</a>
+
+							{% endif %}
+
+
 						</div>
 					</div>
 				</div>
@@ -398,7 +416,7 @@
 						<i class="fa fa-heart-o" aria-hidden="true"></i>
 						by
 						<a href="https://colorlib.com" target="_blank">Colorlib</a>. 
-							Downloaded from
+																																																																																																																																																																																													Downloaded from
 						<a href="https://themeslab.org/" target="_blank">Themeslab</a>
 						<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
 

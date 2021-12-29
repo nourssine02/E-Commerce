@@ -2,12 +2,17 @@
 
 namespace App\Controller;
 
+use App\Entity\User;
+use App\Entity\Panier;
 use App\Entity\Article;
-use App\Repository\ArticleRepository;
+use App\Entity\Commande;
+use App\Form\PanierType;
 use App\Service\Cart\CartService;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Repository\ArticleRepository;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class PanierController extends AbstractController
 {
@@ -18,11 +23,19 @@ class PanierController extends AbstractController
     {
         $panierWithData = $cartService->getFullCart();
 
+        $panier = $this->getDoctrine()->getRepository(Panier::class)->findAll();
         $total = $cartService->getTotal();
+
+    
+
 
         return $this->render('panier/index.html.twig', [
             'items' => $panierWithData,
             'total' => $total,
+            'panier' => $panier,
+            'articles' => $cartService->getFullCart(),
+
+
         ]);
     }
 
@@ -31,11 +44,11 @@ class PanierController extends AbstractController
      */
     public function add($id, CartService $cartService)
     {
+
         $cartService->add($id);
 
         return $this->redirectToRoute("panier_index");
     }
-
 
 
     /**
