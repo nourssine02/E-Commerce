@@ -2,9 +2,7 @@
 
 namespace App\Service\Cart;
 
-use App\Repository\ArticleRepository;
-use App\Repository\CouleurRepository;
-use App\Repository\TailleRepository;
+use App\Repository\PanierRepository;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class CartService
@@ -12,12 +10,12 @@ class CartService
 
     protected $session;
 
-    protected $articleRepository;
+    protected $papanierRepositorynier;
 
-    public function __construct(SessionInterface $session, ArticleRepository $articleRepository)
+    public function __construct(SessionInterface $session, PanierRepository $panierRepository)
     {
         $this->session = $session;
-        $this->articleRepository = $articleRepository;
+        $this->panierRepository = $panierRepository;
     }
 
 
@@ -58,10 +56,9 @@ class CartService
         $panier = $this->session->get('panier', []);
 
         $panierWithData = [];
-        foreach ($panier as $id => $quantite) {
+        foreach ($panier as $id ) {
             $panierWithData[] = [
-                'article' => $this->articleRepository->find($id),
-                'quantite' => $quantite,
+                'panier' => $this->panierRepository->find($id)
 
             ];
         }

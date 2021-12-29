@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Article;
+use App\Entity\SearchBar;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -19,22 +20,51 @@ class ArticleRepository extends ServiceEntityRepository
         parent::__construct($registry, Article::class);
     }
 
+
+    /**
+     * @return Article[] Returns an array of Article objects
+     */
+    public function findSearch(SearchBar $searchBar): array
+    {
+        $query = $this->createQueryBuilder('p');
+
+        if(!empty($searchBar->a)){
+            $query = $query
+                ->andWhere('p.name LIKE :a')
+                ->setParameter('a',"%{$searchBar->a}%");
+        }
+
+        if (!empty($searchBar->minPrice)) {
+            $query = $query
+                ->andWhere('a.prix >= :minPrice')
+                ->setParameter('minPrice', $searchBar->minPrice);
+        }
+        if (!empty($searchBar->maxPrice)) {
+            $query = $query
+                ->andWhere('a.prix <= :maxPrice')
+                ->setParameter('maxPrice', $searchBar->maxPrice);
+        }
+        return $query->getQuery()->getResult();
+
+    }
+
+
     // /**
     //  * @return Article[] Returns an array of Article objects
     //  */
-    /*
-    public function findByExampleField($value)
-    {
-        return $this->createQueryBuilder('a')
-            ->andWhere('a.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('a.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
+
+    // public function findByPrix($critere)
+    // {
+    //     return $this->createQueryBuilder('c')
+    //         ->andWhere('c.prix = :prix')
+    //         ->setParameter('prix', $critere['prix']->getPrix())
+    //         ->orderBy('c.prix', 'ASC')
+    //         ->setMaxResults(10)
+    //         ->getQuery()
+    //         ->getResult()
+    //     ;
+    // }
+
 
     /*
     public function findOneBySomeField($value): ?Article

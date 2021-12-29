@@ -13,7 +13,6 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 /**
  * @ORM\Entity(repositoryClass=ArticleRepository::class)
  * @Vich\Uploadable
-
  */
 class Article
 {
@@ -75,7 +74,7 @@ class Article
      */
     private $comment;
 
-
+  
 
     public function __construct()
     {
@@ -207,7 +206,7 @@ class Article
         return $this;
     }
 
-    
+  
 
   
 

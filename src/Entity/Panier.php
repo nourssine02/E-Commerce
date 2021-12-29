@@ -39,15 +39,11 @@ class Panier
      */
     private $userId;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
-    private $articleId;
-
+  
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $article;
+    private $articleName;
 
     /**
      * @ORM\Column(type="float")
@@ -58,6 +54,14 @@ class Panier
      * @ORM\Column(type="string", length=255)
      */
     private $imageArticle;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $articleId;
+
+    
+
 
     public function getId(): ?int
     {
@@ -114,26 +118,16 @@ class Panier
         return $this;
     }
 
-    public function getArticleId(): ?int
+    
+
+    public function getArticleName(): ?string
     {
-        return $this->articleId;
+        return $this->articleName;
     }
 
-    public function setArticleId(int $articleId): self
+    public function setArticleName(string $articleName): self
     {
-        $this->articleId = $articleId;
-
-        return $this;
-    }
-
-    public function getArticle(): ?string
-    {
-        return $this->article;
-    }
-
-    public function setArticle(string $article): self
-    {
-        $this->article = $article;
+        $this->articleName = $articleName;
 
         return $this;
     }
@@ -161,6 +155,20 @@ class Panier
 
         return $this;
     }
+
+    public function getArticleId(): ?int
+    {
+        return $this->articleId;
+    }
+
+    public function setArticleId(int $articleId): self
+    {
+        $this->articleId = $articleId;
+
+        return $this;
+    }
+
+   
 
 
   

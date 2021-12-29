@@ -14,6 +14,7 @@ use App\Form\SearchType;
 use App\Entity\SearchBar;
 use App\Form\CommentType;
 use App\Form\SearchBarType;
+use App\Repository\ArticleRepository;
 use App\Service\Cart\CartService;
 use App\Repository\CommentRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -27,22 +28,29 @@ class ShopController extends AbstractController
     /**
      * @Route("/shop", name="shop")
      */
-    public function index(CartService $cartService, Request $request): Response
+    public function index(CartService $cartService, Request $request, ArticleRepository $articleRepository): Response
     {
 
-        $Search = new SearchBar();
-        $formS = $this->createForm(SearchBarType::class, $Search);
+        $search = new SearchBar();
+        $formS = $this->createForm(SearchBarType::class , $search);
         $formS->handleRequest($request);
+        $products  = $articleRepository->findSearch($search);
 
+       
+      
+    
 
         $categories = $this->getDoctrine()->getRepository(Categorie::class)->findAll();
         $articles = $this->getDoctrine()->getRepository(Article::class)->findAll();
+        $panier = $this->getDoctrine()->getRepository(Panier::class)->findAll();
         return $this->render('shop/index.html.twig', [
             'articles' => $articles,
             'categories' => $categories,
-            'items' => $cartService->getFullCart(),
+            'panier' => $panier,
             'total' => $cartService->getTotal(),
-            'formS' => $formS->createView()
+            'formS' => $formS->createView(),
+            'products' => $products,
+
 
         ]);
     }
@@ -52,6 +60,7 @@ class ShopController extends AbstractController
      */
     public function detail(Article $article, CartService $cartService, Request $request, EntityManagerInterface $manager): Response
     {
+
 
         //Order
         $panier = new Panier();
@@ -66,7 +75,7 @@ class ShopController extends AbstractController
             $user = $this->getUser();
             $panier->setUserId($user->getId())
                 ->setArticleId($article->getId())
-                ->setArticle($article->getName())
+                ->setArticleName($article->getName())
                 ->setPrixArticle($article->getPrix())
                 ->setImageArticle($article->getImage());
 

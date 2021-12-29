@@ -8,10 +8,11 @@ use App\Entity\Article;
 use App\Entity\Commande;
 use App\Form\PanierType;
 use App\Service\Cart\CartService;
-use App\Repository\ArticleRepository;
+use App\Repository\PanierRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class PanierController extends AbstractController
@@ -19,21 +20,20 @@ class PanierController extends AbstractController
     /**
      * @Route("/panier", name="panier_index")
      */
-    public function index(CartService $cartService): Response
+    public function index(SessionInterface $session, PanierRepository $panierRepository): Response
     {
-        $panierWithData = $cartService->getFullCart();
 
         $panier = $this->getDoctrine()->getRepository(Panier::class)->findAll();
-        $total = $cartService->getTotal();
 
-    
+ 
+      $total =0;
 
 
         return $this->render('panier/index.html.twig', [
-            'items' => $panierWithData,
+            //'panierWithData' => $panierWithData,
             'total' => $total,
             'panier' => $panier,
-            'articles' => $cartService->getFullCart(),
+
 
 
         ]);
@@ -44,9 +44,7 @@ class PanierController extends AbstractController
      */
     public function add($id, CartService $cartService)
     {
-
         $cartService->add($id);
-
         return $this->redirectToRoute("panier_index");
     }
 
@@ -54,9 +52,11 @@ class PanierController extends AbstractController
     /**
      * @Route("/panier/remove/{id}", name="panier_remove")
      */
-    public function remove($id, CartService $cartService)
+    public function remove(Panier $panier)
     {
-        $cartService->remove($id);
+        $em = $this->getDoctrine()->getManager();
+        $em->remove($panier);
+        $em->flush();
         return $this->redirectToRoute("panier_index");
     }
 }

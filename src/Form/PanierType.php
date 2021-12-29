@@ -24,16 +24,18 @@ class PanierType extends AbstractType
                     'M' => 'M',
                     'L' => 'L',
                     'XL' => 'XL',
-                ]])
-                ->add('couleur', ChoiceType::class, [
-                    'choices'  => [
-                        'Bleu' => 'Bleu',
-                        'Black' => 'Black',
-                        'Red' => 'Red',
-                        'Pink' => 'Pink',
-                        'White' => 'White',
-                    ]]);
-           
+                ]
+            ])
+            ->add('couleur', ChoiceType::class, [
+                'choices'  => [
+                    'Bleu' => 'Bleu',
+                    'Black' => 'Black',
+                    'Red' => 'Red',
+                    'Pink' => 'Pink',
+                    'White' => 'White',
+                    'Gray' => 'Gray',
+                ]
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

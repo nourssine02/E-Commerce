@@ -6,6 +6,10 @@ class SearchBar
 {
 
     /*
+    *@var string
+    */
+    private $a = '';
+    /*
     * @var int | null
     */
     private $maxPrice;
@@ -14,7 +18,6 @@ class SearchBar
     * @var int | null
     */
     private $minPrice;
-
 
 
     /**
@@ -61,6 +64,26 @@ class SearchBar
     public function setMinPrice(int $minPrice)
     {
         $this->minPrice = $minPrice;
+
+        return $this;
+    }
+
+    /**
+     * Get /*
+     */ 
+    public function getA()
+    {
+        return $this->a;
+    }
+
+    /**
+     * Set /*
+     *
+     * @return  self
+     */ 
+    public function setA($a)
+    {
+        $this->a = $a;
 
         return $this;
     }
