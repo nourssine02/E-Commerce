@@ -41,7 +41,6 @@ class SecuriteController extends AbstractController
     }
 
 
-
     /**
      * @Route("/login", name="securite_login")
      */

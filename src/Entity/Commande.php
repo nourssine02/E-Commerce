@@ -28,10 +28,10 @@ class Commande
     private $total;
 
     /**
-     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="commandes")
+     * @ORM\Column(type="integer")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $clientName;
+    private $clientId;
 
 
 
@@ -65,14 +65,14 @@ class Commande
         return $this;
     }
 
-    public function getClientName(): ?User
+    public function getClientId(): ?int
     {
-        return $this->clientName;
+        return $this->clientId;
     }
 
-    public function setClientName(?User $clientName): self
+    public function setClientId(?int $clientId): self
     {
-        $this->clientName = $clientName;
+        $this->clientId = $clientId;
 
         return $this;
     }

@@ -4,11 +4,10 @@
 
 {% block body %}
 
-	{# {% if items | length > 0 %} #}
-
 
 	<!-- Shoping Cart -->
-		<form class="bg0 p-t-75 p-b-85"> <div class="container">
+	<form class="bg0 p-t-75 p-b-85">
+		<div class="container">
 
 
 			<div class="row">
@@ -26,43 +25,47 @@
 									<th class="6">Taille</th>
 									<th class="7">Total</th>
 								</tr>
+
+
 								{% for item in panier %}
-									<tr class="table_row">
+									{% if app.user.id == item.userId %}
+										<tr class="table_row">
 
 
-										<td class="column-1">
-											<div class="how-itemcart1">
-												<img src="uploads/images/products/{{item.imageArticle}}" alt="IMG">
+											<td class="column-1">
+												<div class="how-itemcart1">
+													<img src="uploads/images/products/{{item.imageArticle}}" alt="IMG">
 
-											</div>
-										</td>
-										<td class="2">
-											{{ item.articleName }}
-											<div>
-												<a href="{{path('panier_remove' , {'id': item.id})}}">Delete</a>
+												</div>
+											</td>
+											<td class="2">
+												{{ item.articleName }}
+												<div>
+													<a href="{{path('panier_remove' , {'id': item.id})}}">Delete</a>
 
-											</div>
+												</div>
 
-										</td>
-										<td class="3">$
-											{{ item.prixArticle }}</td>
+											</td>
+											<td class="3">$
+												{{ item.prixArticle }}</td>
 
-										<td class="4">
-											{{ item.quantite }}
-										</td>
+											<td class="4">
+												{{ item.quantite }}
+											</td>
 
-										<td class="5">
-											{{ item.couleur }}
-										</td>
-										<td class="6">
-											{{ item.taille }}
-										</td>
+											<td class="5">
+												{{ item.couleur }}
+											</td>
+											<td class="6">
+												{{ item.taille }}
+											</td>
 
-										<td class="7">$
-											{{ item.prixArticle *  item.quantite }}</td>
-									</tr>
+											<td class="7">$
+												{{ item.prixArticle *  item.quantite }}</td>
+										</tr>
+
+									{% endif %}
 								{% endfor %}
-
 
 							</tr>
 
@@ -70,19 +73,6 @@
 						</table>
 					</div>
 
-					<div class="flex-w flex-sb-m bor15 p-t-18 p-b-15 p-lr-40 p-lr-15-sm">
-						<div class="flex-w flex-m m-r-20 m-tb-5">
-							<input class="stext-104 cl2 plh4 size-117 bor13 p-lr-20 m-r-10 m-tb-5" type="text" name="coupon" placeholder="Coupon Code">
-
-							<div class="flex-c-m stext-101 cl2 size-118 bg8 bor13 hov-btn3 p-lr-15 trans-04 pointer m-tb-5">
-								Apply coupon
-							</div>
-						</div>
-
-						<div class="flex-c-m stext-101 cl2 size-119 bg8 bor13 hov-btn3 p-lr-15 trans-04 pointer m-tb-10">
-							Update Cart
-						</div>
-					</div>
 				</div>
 			</div>
 
@@ -101,10 +91,13 @@
 
 						<div class="size-209">
 							<span class="mtext-110 cl2">
-							{% for item in panier %}
-								{% set total = total + (item.prixArticle * item.quantite) %}
-							{% endfor %}
-								
+								{% for item in panier %}
+									{% if app.user.id == item.userId %}
+
+										{% set total = total + (item.prixArticle * item.quantite) %}
+									{% endif %}
+								{% endfor %}
+
 								${{total}}
 							</span>
 						</div>
@@ -140,29 +133,14 @@
 						</div>
 					</div>
 
-					<button class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer">
+					<a href="{{path('panier_check')}}" class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer" >
+
 						Proceed to Checkout
-					</button>
+					</a>
 				</div>
 			</div>
 
 		</div>
 	</div>
 
-</form>
-
-
-{# {% else %}
-		
-			<p style="    color: red;
-								display: flex;
-								align-items: center;
-								justify-content: center;
-								display: flex;
-								font-size: 20px;
-								padding-top: 100px;
-								padding-bottom: 100px;">
-				Surprise, your cart is empty
-			</p>
-		 
-		{% endif %}#}{% endblock %}
+</form>{% endblock %}

@@ -34,6 +34,7 @@ class PanierType extends AbstractType
                     'Pink' => 'Pink',
                     'White' => 'White',
                     'Gray' => 'Gray',
+                    'Brown' => 'Brown'
                 ]
             ]);
     }

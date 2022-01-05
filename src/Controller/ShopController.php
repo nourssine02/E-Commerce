@@ -2,21 +2,17 @@
 
 namespace App\Controller;
 
-use App\Entity\User;
 use App\Entity\Panier;
-use App\Entity\Search;
 use App\Entity\Article;
-use App\Entity\Categorie;
 use App\Entity\Comment;
-use App\Entity\Commande;
+use App\Entity\Favoris;
 use App\Form\PanierType;
-use App\Form\SearchType;
-use App\Entity\SearchBar;
+use App\Entity\Categorie;
 use App\Form\CommentType;
 use App\Form\SearchBarType;
-use App\Repository\ArticleRepository;
 use App\Service\Cart\CartService;
-use App\Repository\CommentRepository;
+use App\Repository\ArticleRepository;
+use App\Repository\FavorisRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -28,28 +24,34 @@ class ShopController extends AbstractController
     /**
      * @Route("/shop", name="shop")
      */
-    public function index(CartService $cartService, Request $request, ArticleRepository $articleRepository): Response
+    public function index(Request $request, ArticleRepository $articleRepository): Response
     {
 
-        $search = new SearchBar();
-        $formS = $this->createForm(SearchBarType::class , $search);
-        $formS->handleRequest($request);
-        $products  = $articleRepository->findSearch($search);
 
-       
-      
-    
+
+        $total = 0;
 
         $categories = $this->getDoctrine()->getRepository(Categorie::class)->findAll();
         $articles = $this->getDoctrine()->getRepository(Article::class)->findAll();
         $panier = $this->getDoctrine()->getRepository(Panier::class)->findAll();
+
+
+
+        //Search  
+        $form = $this->createForm(SearchBarType::class);
+        $search = $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            //on recherche correspondant aux mots cles
+            $articles = $articleRepository->search($search->get('mots')
+                ->getData());
+        }
+
         return $this->render('shop/index.html.twig', [
             'articles' => $articles,
             'categories' => $categories,
             'panier' => $panier,
-            'total' => $cartService->getTotal(),
-            'formS' => $formS->createView(),
-            'products' => $products,
+            'total' => $total,
+            'form' => $form->createView(),
 
 
         ]);
@@ -60,6 +62,8 @@ class ShopController extends AbstractController
      */
     public function detail(Article $article, CartService $cartService, Request $request, EntityManagerInterface $manager): Response
     {
+
+        $total = 0;
 
 
         //Order
@@ -73,19 +77,21 @@ class ShopController extends AbstractController
             $manager = $this->getDoctrine()->getManager();
 
             $user = $this->getUser();
-            $panier->setUserId($user->getId())
-                ->setArticleId($article->getId())
-                ->setArticleName($article->getName())
-                ->setPrixArticle($article->getPrix())
-                ->setImageArticle($article->getImage());
+            // if ($user) {
+                $panier->setUserId($user->getId())
+                    ->setArticleId($article->getId())
+                    ->setArticleName($article->getName())
+                    ->setPrixArticle($article->getPrix())
+                    ->setImageArticle($article->getImage());
 
 
-            $manager->persist($panier);
-            $manager->flush();
+                $manager->persist($panier);
+                $manager->flush();
 
-
-
-            return $this->redirectToRoute("panier_index");
+                return $this->redirectToRoute("panier_index");
+            // } else {
+            //     return $this->redirectToRoute("securite_login");
+            // }
         }
 
 
@@ -105,17 +111,56 @@ class ShopController extends AbstractController
         }
 
         $articles = $this->getDoctrine()->getRepository(Article::class)->findAll();
+        $paniers = $this->getDoctrine()->getRepository(Panier::class)->findAll();
+
 
 
         return $this->render('shop/detail.html.twig', [
             'article' => $article,
             'articles' => $articles,
             'items' => $cartService->getFullCart(),
-            'total' => $cartService->getTotal(),
+            'total' => $total,
             'commentForm' => $form->createView(),
             'comment' => $comment,
             'form' => $formP->createView(),
+            'panier' => $paniers
 
         ]);
+    }
+
+    /**
+     * @Route("/shop/{id}/favoris", name="shop_favoris")
+     */
+    public function favoris(Article $article, EntityManagerInterface $manager, FavorisRepository $favorisRepository): Response
+    {
+        $user = $this->getUser();
+        if (!$user) return $this->json([
+            'code' => 403,
+            'message' => 'Unauthorized'
+        ], 403);
+        if ($article->isLikedByUser($user)) {
+            $favoris = $favorisRepository->findOneBy([
+                'article' => $article,
+                'user' => $user
+            ]);
+            $manager->remove($favoris);
+            $manager->flush();
+            return $this->json([
+                'code' => 200,
+                'message' => 'Favoris well remove',
+                'favoris' => $favorisRepository->count(['article' => $article])
+            ], 200);
+        }
+        $favoris = new Favoris();
+        $favoris->setArticle($article)
+            ->setUser($user);
+        $manager->persist($favoris);
+        $manager->flush();
+
+        return $this->json([
+            'code' => 200,
+            'message' => 'Favoris well add',
+            'favoris' => $favorisRepository->count(['article' => $article])
+        ], 200);
     }
 }

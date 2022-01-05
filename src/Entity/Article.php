@@ -6,12 +6,15 @@ use App\Repository\ArticleRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use phpDocumentor\Reflection\Types\Boolean;
+use PhpParser\Node\Expr\Cast\Bool_;
 use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 
 /**
  * @ORM\Entity(repositoryClass=ArticleRepository::class)
+ * @ORM\Table(name="article", indexes={@ORM\Index(columns={"name", "description"}, flags={"fulltext"})})
  * @Vich\Uploadable
  */
 class Article
@@ -67,19 +70,25 @@ class Article
      */
     private $categorie;
 
- 
-    
+
+
     /**
      * @ORM\OneToMany(targetEntity=Comment::class, mappedBy="article")
      */
     private $comment;
 
-  
+    /**
+     * @ORM\OneToMany(targetEntity=Favoris::class, mappedBy="article")
+     */
+    private $favoris;
+
+
 
     public function __construct()
     {
-       
+
         $this->comment = new ArrayCollection();
+        $this->favoris = new ArrayCollection();
     }
 
 
@@ -206,11 +215,48 @@ class Article
         return $this;
     }
 
-  
+    /**
+     * @return Collection|Favoris[]
+     */
+    public function getFavoris(): Collection
+    {
+        return $this->favoris;
+    }
 
-  
+    public function addFavori(Favoris $favori): self
+    {
+        if (!$this->favoris->contains($favori)) {
+            $this->favoris[] = $favori;
+            $favori->setArticle($this);
+        }
 
-   
+        return $this;
+    }
 
- 
+    public function removeFavori(Favoris $favori): self
+    {
+        if ($this->favoris->removeElement($favori)) {
+            // set the owning side to null (unless already changed)
+            if ($favori->getArticle() === $this) {
+                $favori->setArticle(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     *  Permet de savoir si cet article est liké par un user
+     *
+     * @param User $user
+     * @return boolean
+     */
+    public function isLikedByUser(User $user): bool
+    {
+        foreach ($this->favoris as $favori) {
+            if ($favori->getUser() === $user) return true;
+        }
+
+        return false;
+    }
 }

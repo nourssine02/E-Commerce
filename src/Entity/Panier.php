@@ -3,8 +3,6 @@
 namespace App\Entity;
 
 use App\Repository\PanierRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -35,12 +33,6 @@ class Panier
     private $taille;
 
     /**
-     * @ORM\Column(type="integer")
-     */
-    private $userId;
-
-  
-    /**
      * @ORM\Column(type="string", length=255)
      */
     private $articleName;
@@ -60,14 +52,17 @@ class Panier
      */
     private $articleId;
 
-    
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $userId;
 
+  
 
     public function getId(): ?int
     {
         return $this->id;
     }
-
 
     public function getQuantite(): ?int
     {
@@ -80,7 +75,6 @@ class Panier
 
         return $this;
     }
-
 
     public function getCouleur(): ?string
     {
@@ -105,20 +99,6 @@ class Panier
 
         return $this;
     }
-
-    public function getUserId(): ?int
-    {
-        return $this->userId;
-    }
-
-    public function setUserId(int $userId): self
-    {
-        $this->userId = $userId;
-
-        return $this;
-    }
-
-    
 
     public function getArticleName(): ?string
     {
@@ -168,8 +148,18 @@ class Panier
         return $this;
     }
 
+    public function getUserId(): ?int
+    {
+        return $this->userId;
+    }
+
+    public function setUserId(int $userId): self
+    {
+        $this->userId = $userId;
+
+        return $this;
+    }
+
+
    
-
-
-  
 }

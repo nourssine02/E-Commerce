@@ -20,33 +20,48 @@ class ArticleRepository extends ServiceEntityRepository
         parent::__construct($registry, Article::class);
     }
 
-
     /**
-     * @return Article[] Returns an array of Article objects
+     * Recherche les articles en fonction du formulaire
+     * @return void 
      */
-    public function findSearch(SearchBar $searchBar): array
+    public function search($mots = null)
     {
-        $query = $this->createQueryBuilder('p');
-
-        if(!empty($searchBar->a)){
-            $query = $query
-                ->andWhere('p.name LIKE :a')
-                ->setParameter('a',"%{$searchBar->a}%");
+        $query = $this->createQueryBuilder('a');
+        if ($mots != null) {
+            $query->andWhere('MATCH_AGAINST(a.name, a.description) AGAINST (:mots boolean)>0')
+                ->setParameter('mots', $mots);
         }
-
-        if (!empty($searchBar->minPrice)) {
-            $query = $query
-                ->andWhere('a.prix >= :minPrice')
-                ->setParameter('minPrice', $searchBar->minPrice);
-        }
-        if (!empty($searchBar->maxPrice)) {
-            $query = $query
-                ->andWhere('a.prix <= :maxPrice')
-                ->setParameter('maxPrice', $searchBar->maxPrice);
-        }
+        
         return $query->getQuery()->getResult();
-
     }
+
+
+    // /**
+    //  * @return Article[] Returns an array of Article objects
+    //  */
+    // public function findSearch(SearchBar $searchBar): array
+    // {
+    //     $query = $this->createQueryBuilder('p');
+
+    //     if(!empty($searchBar->a)){
+    //         $query = $query
+    //             ->andWhere('p.name LIKE :a')
+    //             ->setParameter('a',"%{$searchBar->a}%");
+    //     }
+
+    //     if (!empty($searchBar->minPrice)) {
+    //         $query = $query
+    //             ->andWhere('a.prix >= :minPrice')
+    //             ->setParameter('minPrice', $searchBar->minPrice);
+    //     }
+    //     if (!empty($searchBar->maxPrice)) {
+    //         $query = $query
+    //             ->andWhere('a.prix <= :maxPrice')
+    //             ->setParameter('maxPrice', $searchBar->maxPrice);
+    //     }
+    //     return $query->getQuery()->getResult();
+
+    // }
 
 
     // /**
